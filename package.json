@@ -1,6 +1,6 @@
 {
   "name": "ava-hd-wallet",
-  "version": "1.0.6",
+  "version": "1.0.9",
   "description": "Hierarchical Deterministic Wallet for AVA",
   "main": "lib/index.js",
   "files": [

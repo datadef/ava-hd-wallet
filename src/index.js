@@ -8,7 +8,7 @@ class AvaHDWallet {
     this.wallet;
     this.entropy = 128;
     this.chain_id = 'X';
-    this.path = 0;
+    this.path = "m/44/570/0";
   }
 
   /*
@@ -49,7 +49,9 @@ class AvaHDWallet {
   getKeypair() {
     const result = {
       publicKey: this.getPublicKey(),
-      privateKey: this.getPrivateKey()
+      privateKey: this.getPrivateKey(),
+      publicExtendedKey: this.wallet.publicExtendedKey,
+      privateExtendedKey: this.wallet.privateExtendedKey
     }
     return result
   }
@@ -84,8 +86,40 @@ class AvaHDWallet {
   fromMnemonic(mnemonic) {
     const m = bip39.mnemonicToSeedSync(mnemonic);
     this.wallet = hdkey.fromMasterSeed(m);
-    this.wallet = this.wallet.derive(`m/44'/570'/${this.path}'`);
+    this.wallet = this.wallet.derive(this.path)
     return this.getKeypair()
+  }
+
+  /*
+  * Generate public key by given extended public key and derive path
+  * @param mnemonic
+  */
+  fromExtendedPublicKey(key) {
+    var key = hdkey.fromExtendedKey(key)
+    var path = this.path
+    key = key.derive(path)
+    const obfuscate = this.obfuscatePubKey(key._publicKey)
+    var result = {
+      publicKey: this.chain_id + "-" + this.serializeWChecksum(obfuscate),
+      privateKey: null
+    }
+    return result
+  }
+
+  /*
+  * Generate public key and private key by given extended private key and derive path
+  * @param mnemonic
+  */
+  fromExtendedPrivateKey(key) {
+    var key = hdkey.fromExtendedKey(key)
+    var path = this.path
+    key = key.derive(path)
+    const obfuscate = this.obfuscatePubKey(key._publicKey)
+    var result = {
+      publicKey: this.chain_id + "-" + this.serializeWChecksum(obfuscate),
+      privateKey: this.serializeWChecksum(key._privateKey)
+    }
+    return result
   }
 
   /*
