@@ -1,0 +1,38 @@
+{
+  "name": "ava-hd-wallet",
+  "version": "1.0.6",
+  "description": "Hierarchical Deterministic Wallet for AVA",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/datadef/ava-hd-wallet.git"
+  },
+  "scripts": {
+    "publish": "./node_modules/.bin/babel src --out-dir lib"
+  },
+  "keywords": [
+    "ava",
+    "hd",
+    "wallet",
+    "cryptocurrency"
+  ],
+  "author": "DataDef",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/datadef/ava-hd-wallet/issues"
+  },
+  "homepage": "https://github.com/datadef/ava-hd-wallet#readme",
+  "dependencies": {
+    "bip39": "^3.0.2",
+    "bn.js": "^5.1.2",
+    "create-hash": "^1.2.0",
+    "hdkey": "^2.0.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1"
+  }
+}
