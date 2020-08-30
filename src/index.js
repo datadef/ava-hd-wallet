@@ -6,7 +6,7 @@ class AvaHDWallet {
   constructor() {
     this.wallet;
     this.ava_wallet;
-    this.entropy = 128;
+    this.entropy = 256;
     this.chain_id = "X";
     this.path = `m/44'/9000'/0'`;
   }
@@ -85,7 +85,6 @@ class AvaHDWallet {
     let keychain = new Avalanche.avm.AVMKeyChain(hrp, this.chain_id);
 
     var hdkey = HDKey.fromExtendedKey(extended_key);
-    
     let derivationPath = `${this.path}`;
     let key = hdkey.derive(derivationPath);
 
@@ -113,7 +112,7 @@ class AvaHDWallet {
     let derivationPath = `${this.path}`;
     let key = hdkey.derive(derivationPath);
 
-    let privKeyHEX = key.privateKey.toString("hex");
+    let privKeyHEX = key.publicKey.toString("hex");
     let privKeyBuffer = Buffer.from(privKeyHEX, "hex");
     this.ava_wallet = keychain.importKey(privKeyBuffer);
 

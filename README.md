@@ -14,34 +14,33 @@ Install it using npm:
 
     import AvaHDWallet from "ava-hd-wallet";
 
-    // optional - set entropy (default is 128)
-    AvaHDWallet.setEntropy(128); // -> 12 words mnemonic
+    // optional - set entropy (default is 256)
     AvaHDWallet.setEntropy(256); // -> 24 words mnemonic
 
-    const mnemonic = AvaHDWallet.generateMnemonic();  // -> "nation profit giant truth meat carpet demand expect nest sudden endorse ahead"
+    const mnemonic = AvaHDWallet.generateMnemonic();
     const wallet = AvaHDWallet.fromMnemonic(mnemonic)
 
-    wallet.publicKey  // -> X-J4VCFdFcwPmokjhPmVU3vDLafH2Gwef3b
-    wallet.privateKey  // -> 2J5ocPonnWEhD4iCo4tjxK2s5Gx2FU8sxZnCu5YiiR89UycUnk
+    wallet.publicKey  // -> X-avax16d7a94xle7pvfztx7p4rct6dzr7dw8m2cwwtda
+    wallet.privateKey  // -> PrivateKey-2kez3FVVHdubhSNYmgbHHeHY5Pn5p72v7ZLWLqUyEardJzeuGn
 
 > Generate keypair using specific mnemonic
 
     import AvaHDWallet from "ava-hd-wallet";
 
-    const wallet = AvaHDWallet.fromMnemonic("nation profit giant truth meat carpet demand expect nest sudden endorse ahead")
+    const wallet = AvaHDWallet.fromMnemonic("mushroom crew fluid nephew movie roof guess gas intact actor off race guilt genuine solar move save quarter impact great stove print tourist damp")
 
-     wallet.publicKey // -> X-9Hqpt8cHXVD8r3KShV1wf9UY3k8JnAMBo
-     wallet.privateKey //  -> yVnydGMgDvRbYdtgvpt78eG255uVZindjKnGS67sKgDBxpKMW
+    wallet.publicKey  // -> X-avax16d7a94xle7pvfztx7p4rct6dzr7dw8m2cwwtda
+    wallet.privateKey  // -> PrivateKey-2kez3FVVHdubhSNYmgbHHeHY5Pn5p72v7ZLWLqUyEardJzeuGn
 
 > Set derivation path (default is m/44'/570'/0)
 
     import AvaHDWallet from "ava-hd-wallet";
 
-    AvaHDWallet.setPath("m/44/570/19"); // -> m/44'/570'/19
-    const wallet = AvaHDWallet.fromMnemonic("nation profit giant truth meat carpet demand expect nest sudden endorse ahead")
+    AvaHDWallet.setPath("m/44'/9000'/0");
+    const wallet = AvaHDWallet.fromMnemonic("mushroom crew fluid nephew movie roof guess gas intact actor off race guilt genuine solar move save quarter impact great stove print tourist damp")
 
-    wallet.publicKey  // -> X-JH34kY3m3ofieGSQ631HPZy223eK8BSVe
-    wallet.privateKey  // -> 247fonz8n3ZVAYmjRgdL54eY11uRy2kHU7ncyD7RyGj4oN22wm
+    wallet.publicKey  // -> X-avax1mtw0dc0d87fq4pnemarcfcs43ngys4ejs4z9tj
+    wallet.privateKey  // -> PrivateKey-YnKXhuzyxtcd2Pw94xa37bFwi4T2PzxFrNcQe32sbf7FCvXja
 
 > Set chain (default is "X")
 
@@ -52,19 +51,19 @@ Install it using npm:
     const mnemonic = AvaHDWallet.generateMnemonic();
     const wallet = AvaHDWallet.fromMnemonic(mnemonic)
 
-    wallet.publicKey // -> 19-EAyCtuPuNDG8xDoVz7XFMGydWnVowQjrK
-    wallet.privateKey // -> 247fonz8n3ZVAYmjRgdL54eY11uRy2kHU7ncyD7RyGj4oN22wm
+    wallet.publicKey // -> 19-avax1mtw0dc0d87fq4pnemarcfcs43ngys4ejs4z9tj
+    wallet.privateKey // -> PrivateKey-YnKXhuzyxtcd2Pw94xa37bFwi4T2PzxFrNcQe32sbf7FCvXja
 
 > Generate wallet by given xpub and xprv
 
     import AvaHDWallet from "ava-hd-wallet";
 
-    AvaHDWallet.setPath("m/44/570/0"); // -> m/44'/570'/0
-    const wallet = AvaHDWallet.fromMnemonic("yard car primary pill service grid state slice marriage album lawn vapor")
+    AvaHDWallet.setPath("m/44'/9000'/0");
+    const wallet = AvaHDWallet.fromMnemonic("mushroom crew fluid nephew movie roof guess gas intact actor off race guilt genuine solar move save quarter impact great stove print tourist damp")
 
     AvaHDWallet.setPath("m/0/1");
 
-    AvaHDWallet.fromExtendedPublicKey(wallet.publicExtendedKey) // -> { publicKey: 'X-C86AtvrxiVMBBRGxHox6TBL9PvMk7fkFm', privateKey: null }
-    AvaHDWallet.fromExtendedPrivateKey(wallet.privateExtendedKey // -> {publicKey: 'X-C86AtvrxiVMBBRGxHox6TBL9PvMk7fkFm', privateKey:'YiDPs...'}
+    AvaHDWallet.fromExtendedPublicKey(wallet.publicExtendedKey) // -> { publicKey: 'X-avax16qm93a9ask30qldw94jz686s7z7dw5ecyrezna', privateKey: null }
+    AvaHDWallet.fromExtendedPrivateKey(wallet.privateExtendedKey) // -> {publicKey: 'avax16qm93a9ask30qldw94jz686s7z7dw5ecyrezna', privateKey:'PrivateKey-jUEHoYnyvLMByd4EsuNbMVYfZCgpipthgKTo1TSv3xnsjx7w'}
 
 Copyright © 2020 Mert Gönül (DataDef)
