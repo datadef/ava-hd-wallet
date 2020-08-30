@@ -1,147 +1,150 @@
 const bip39 = require("bip39");
-const createHash = require("create-hash");
-const hdkey = require("hdkey");
-const Base58 = require("./base58");
+const HDKey = require("hdkey");
+const Avalanche = require("avalanche");
 
 class AvaHDWallet {
   constructor() {
     this.wallet;
+    this.ava_wallet;
     this.entropy = 128;
-    this.chain_id = 'X';
-    this.path = "m/44/570/0";
+    this.chain_id = "X";
+    this.path = `m/44'/9000'/0'`;
   }
 
   /*
-   * Hash pubkey twice. This obfuscates and shortens it.
-   * @param public
+   * Takes a Buffer and returns a base-58 string with checksum as per the AVA standard.
+   * @param path
    */
-  obfuscatePubKey(pub) {
-    if (pub.length == 65) {
-      pub = Buffer.from(ec.keyFromPublic(pub).getPublic(true, "hex"), "hex"); //make compact, stick back into buffer
-    }
-    if (pub.length == 33) {
-      let sha256 = Buffer.from(createHash('sha256').update(pub).digest());
-      let ripesha = Buffer.from(createHash('rmd160').update(sha256).digest());
-      return ripesha;
-    }
-  }
-
-  /*
-  * Takes a Buffer and adds a checksum, returning a Buffer with the 4-byte checksum appended.
-  * @param public
-  */
-  appendChecksum(buff) {
-    return Buffer.concat([buff, Buffer.from(createHash("sha256").update(buff).digest().slice(28))]);
-  }
-
-  /*
-  * Takes a Buffer and returns a base-58 string with checksum as per the AVA standard.
-  * @param bytes
-  */
-  serializeWChecksum(bytes) {
-    return Base58.encode(Buffer.from(this.appendChecksum(bytes)));
-  }
-
-  /*
-  * Takes a Buffer and returns a base-58 string with checksum as per the AVA standard.
-  * @param path
-  */
   getKeypair() {
     const result = {
       publicKey: this.getPublicKey(),
       privateKey: this.getPrivateKey(),
       publicExtendedKey: this.wallet.publicExtendedKey,
-      privateExtendedKey: this.wallet.privateExtendedKey
-    }
-    return result
+      privateExtendedKey: this.wallet.privateExtendedKey,
+    };
+    return result;
   }
 
   /*
-  * Return public key
-  */
+   * Return public key
+   */
   getPublicKey() {
-    const obfuscate = this.obfuscatePubKey(this.wallet._publicKey)
-    return this.chain_id + "-" + this.serializeWChecksum(obfuscate);
+    return this.ava_wallet.getAddressString();
   }
 
   /*
-  * Return private key
-  */
+   * Return private key
+   */
   getPrivateKey() {
-    return this.serializeWChecksum(this.wallet._privateKey);
+    return this.ava_wallet.getPrivateKeyString();
   }
 
   /*
-  * Generate mnemonic
-  */
+   * Generate mnemonic
+   */
   generateMnemonic() {
     this.mnemonic = bip39.generateMnemonic(this.entropy);
     return this.mnemonic;
   }
 
   /*
-  * Convert mnemonic to seed
-  * @param mnemonic
-  */
+   * Convert mnemonic to seed
+   * @param mnemonic
+   */
   fromMnemonic(mnemonic) {
-    const m = bip39.mnemonicToSeedSync(mnemonic);
-    this.wallet = hdkey.fromMasterSeed(m);
-    this.wallet = this.wallet.derive(this.path)
-    return this.getKeypair()
-  }
+    let hrp = Avalanche.utils.getPreferredHRP(1);
+    let keychain = new Avalanche.avm.AVMKeyChain(hrp, this.chain_id);
 
-  /*
-  * Generate public key by given extended public key and derive path
-  * @param mnemonic
-  */
-  fromExtendedPublicKey(key) {
-    var key = hdkey.fromExtendedKey(key)
-    var path = this.path
-    key = key.derive(path)
-    const obfuscate = this.obfuscatePubKey(key._publicKey)
+    const seed = bip39.mnemonicToSeedSync(mnemonic);
+    const hdkey = HDKey.fromMasterSeed(seed);
+
+    let derivationPath = `${this.path}`;
+    let key = hdkey.derive(derivationPath);
+    this.wallet = hdkey.derive(derivationPath);
+
+    let privateKeyHEX = key.privateKey.toString("hex");
+    let privateKeyBuffer = Buffer.from(privateKeyHEX, "hex");
+    this.ava_wallet = keychain.importKey(privateKeyBuffer);
+
     var result = {
-      publicKey: this.chain_id + "-" + this.serializeWChecksum(obfuscate),
-      privateKey: null
-    }
-    return result
+      publicKey: this.ava_wallet.getAddressString(),
+      privateKey: this.ava_wallet.getPrivateKeyString(),
+      publicExtendedKey: this.wallet.publicExtendedKey,
+      privateExtendedKey: this.wallet.privateExtendedKey,
+    };
+
+    return result;
   }
 
   /*
-  * Generate public key and private key by given extended private key and derive path
-  * @param mnemonic
-  */
-  fromExtendedPrivateKey(key) {
-    var key = hdkey.fromExtendedKey(key)
-    var path = this.path
-    key = key.derive(path)
-    const obfuscate = this.obfuscatePubKey(key._publicKey)
+   * Generate public key by given extended public key and derive path
+   * @param mnemonic
+   */
+  fromExtendedPublicKey(extended_key) {
+    let hrp = Avalanche.utils.getPreferredHRP(1);
+    let keychain = new Avalanche.avm.AVMKeyChain(hrp, this.chain_id);
+
+    var hdkey = HDKey.fromExtendedKey(extended_key);
+    
+    let derivationPath = `${this.path}`;
+    let key = hdkey.derive(derivationPath);
+
+    let pubKeyHEX = key.publicKey.toString("hex");
+    let pubKeyBuffer = Buffer.from(pubKeyHEX, "hex");
+    this.ava_wallet = keychain.importKey(pubKeyBuffer);
+
     var result = {
-      publicKey: this.chain_id + "-" + this.serializeWChecksum(obfuscate),
-      privateKey: this.serializeWChecksum(key._privateKey)
-    }
-    return result
+      publicKey: this.ava_wallet.getAddressString(),
+      privateKey: null,
+    };
+
+    return result;
   }
 
   /*
-  * Set chain id. Default is "X"
-  * @param chain_id
-  */
+   * Generate public key and private key by given extended private key and derive path
+   * @param mnemonic
+   */
+  fromExtendedPrivateKey(extended_key) {
+    let hrp = Avalanche.utils.getPreferredHRP(1);
+    let keychain = new Avalanche.avm.AVMKeyChain(hrp, this.chain_id);
+
+    var hdkey = HDKey.fromExtendedKey(extended_key);
+    let derivationPath = `${this.path}`;
+    let key = hdkey.derive(derivationPath);
+
+    let privKeyHEX = key.privateKey.toString("hex");
+    let privKeyBuffer = Buffer.from(privKeyHEX, "hex");
+    this.ava_wallet = keychain.importKey(privKeyBuffer);
+
+    var result = {
+      publicKey: this.ava_wallet.getAddressString(),
+      privateKey: this.ava_wallet.getPrivateKeyString(),
+    };
+
+    return result;
+  }
+
+  /*
+   * Set chain id. Default is "X"
+   * @param chain_id
+   */
   setChainId(chain_id) {
     this.chain_id = chain_id;
   }
 
   /*
-  * Set BIP39 entropy value
-  * @param entropy - default is 128 which is equal to 12 words mnemonic
-  */
+   * Set BIP39 entropy value
+   * @param entropy - default is 128 which is equal to 12 words mnemonic
+   */
   setEntropy(entropy) {
     this.entropy = entropy;
   }
 
   /*
-  * Set derive path
-  * @param path
-  */
+   * Set derive path
+   * @param path
+   */
   setPath(path) {
     this.path = path;
   }

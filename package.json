@@ -26,9 +26,9 @@
   },
   "homepage": "https://github.com/datadef/ava-hd-wallet#readme",
   "dependencies": {
+    "avalanche": "^2.4.3",
     "bip39": "^3.0.2",
     "bn.js": "^5.1.2",
-    "create-hash": "^1.2.0",
     "hdkey": "^2.0.0"
   },
   "devDependencies": {

@@ -1,13 +1,8 @@
 const AvaHDWallet = require('./index.js')
 
-AvaHDWallet.setPath("m/44/570/0"); // -> m/44'/570'/0
-const wallet = AvaHDWallet.fromMnemonic("yard car primary pill service grid state slice marriage album lawn vapor")
 
-wallet.publicKey  // -> X-JH34kY3m3ofieGSQ631HPZy223eK8BSVe
-wallet.privateKey  // -> 247fonz8n3ZVAYmjRgdL54eY11uRy2kHU7ncyD7RyGj4oN22wm
+const wallet = AvaHDWallet.fromMnemonic("mushroom crew fluid nephew movie roof guess gas intact actor off race guilt genuine solar move save quarter impact great stove print tourist damp")
 
 console.log(wallet)
 
-AvaHDWallet.setPath("m/0/1"); // -> m/44'/570'/19'
-console.log(AvaHDWallet.fromExtendedPublicKey(wallet.publicExtendedKey))
-console.log(AvaHDWallet.fromExtendedPrivateKey(wallet.privateExtendedKey))
+console.log(AvaHDWallet.fromExtendedPrivateKey('xprvA3NKFPg6VHEwfLt7Q2pmB7CknT5QbBt6q6Z69pUBC2rJzUu56zrQv3ASW8zCPfHMDWNkZpP3mvRzKYyp6AH6srnujeiXTttCDrurXKM6RkC'))
