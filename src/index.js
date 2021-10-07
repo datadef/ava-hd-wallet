@@ -53,7 +53,7 @@ class AvaHDWallet {
    */
   fromMnemonic(mnemonic) {
     let hrp = Avalanche.utils.getPreferredHRP(1);
-    let keychain = new Avalanche.avm.AVMKeyChain(hrp, this.chain_id);
+    let keychain = new Avalanche.avm.KeyPair(hrp, this.chain_id);
 
     const seed = bip39.mnemonicToSeedSync(mnemonic);
     const hdkey = HDKey.fromMasterSeed(seed);
@@ -64,7 +64,8 @@ class AvaHDWallet {
 
     let privateKeyHEX = key.privateKey.toString("hex");
     let privateKeyBuffer = Buffer.from(privateKeyHEX, "hex");
-    this.ava_wallet = keychain.importKey(privateKeyBuffer);
+    keychain.importKey(privateKeyBuffer);
+    this.ava_wallet =  keychain;
 
     var result = {
       publicKey: this.ava_wallet.getAddressString(),
@@ -82,7 +83,7 @@ class AvaHDWallet {
    */
   fromExtendedPublicKey(extended_key) {
     let hrp = Avalanche.utils.getPreferredHRP(1);
-    let keychain = new Avalanche.avm.AVMKeyChain(hrp, this.chain_id);
+    let keychain = new Avalanche.avm.KeyPair(hrp, this.chain_id);
 
     var hdkey = HDKey.fromExtendedKey(extended_key);
     let derivationPath = `${this.path}`;
@@ -90,7 +91,8 @@ class AvaHDWallet {
 
     let pubKeyHEX = key.publicKey.toString("hex");
     let pubKeyBuffer = Buffer.from(pubKeyHEX, "hex");
-    this.ava_wallet = keychain.importKey(pubKeyBuffer);
+    this.ava_wallet = keychain
+    keychain.importKey(pubKeyBuffer);
 
     var result = {
       publicKey: this.ava_wallet.getAddressString(),
@@ -106,7 +108,7 @@ class AvaHDWallet {
    */
   fromExtendedPrivateKey(extended_key) {
     let hrp = Avalanche.utils.getPreferredHRP(1);
-    let keychain = new Avalanche.avm.AVMKeyChain(hrp, this.chain_id);
+    let keychain = new Avalanche.avm.KeyPair(hrp, this.chain_id);
 
     var hdkey = HDKey.fromExtendedKey(extended_key);
     let derivationPath = `${this.path}`;
@@ -114,7 +116,8 @@ class AvaHDWallet {
 
     let privKeyHEX = key.publicKey.toString("hex");
     let privKeyBuffer = Buffer.from(privKeyHEX, "hex");
-    this.ava_wallet = keychain.importKey(privKeyBuffer);
+    this.ava_wallet = keychain;
+    keychain.importKey(privKeyBuffer);
 
     var result = {
       publicKey: this.ava_wallet.getAddressString(),
